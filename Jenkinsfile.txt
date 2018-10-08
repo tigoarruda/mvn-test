@@ -1,0 +1,23 @@
+pipeline {
+  agent any
+  stages {
+    stage('Unit Test') { 
+      steps {
+        mvn clean test
+      }
+    }
+    stage('Deploy Standalone') { 
+      steps {
+        mvn deploy -P standalone
+      }
+    }
+    stage('Deploy CloudHub') { 
+      environment {
+        ANYPOINT_CREDENTIALS = credentials('cloudhub-guilherme')
+      }
+      steps {
+        mvn deploy -P cloudhub -Dmule.version=3.9.0 -Danypoint.username=${cloudhub-guilherme_USR} -Danypoint.password=${cloudhub-guilherme_PSW}
+      }
+    }
+  }
+}
